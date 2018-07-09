@@ -39,13 +39,22 @@ namespace _01Basic
             //4.加入作业调度池中
             sched.ScheduleJob(job, trigger);
 
+            //加入第二个作业 1个job只能绑定在1个trigger
+            IJobDetail job2 = JobBuilder.Create<JobDemo2>().Build();
+            ISimpleTrigger trigger2 = (ISimpleTrigger)TriggerBuilder.Create().
+                WithSimpleSchedule(x => x.WithIntervalInSeconds(3).RepeatForever()).Build();
+            sched.ScheduleJob(job2, trigger2);
+         
             //5.开始运行
             sched.Start();
+            ////挂起3分钟
+            //Thread.Sleep(TimeSpan.FromMinutes(3));
+            ////3分钟后关闭作业调度，将不在执行
+            //sched.Shutdown();
 
-            //挂起3分钟
-            Thread.Sleep(TimeSpan.FromMinutes(3));
-            //3分钟后关闭作业调度，将不在执行
-            sched.Shutdown();
+            //1分钟后移除trigger2
+            Thread.Sleep(TimeSpan.FromMinutes(1));
+            sched.UnscheduleJob(trigger2.Key);//移除trigger2
 
             Console.ReadKey();
 
@@ -66,6 +75,24 @@ namespace _01Basic
         Task IJob.Execute(IJobExecutionContext context)
         {
            return Task.Run(()=>Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss fff")));
+        }
+    }
+
+
+    public class JobDemo2 : IJob
+    {
+        /// <summary>
+        /// 这里是作业调度每次定时执行方法
+        /// </summary>
+        /// <param name="context"></param>
+        //public void Execute(IJobExecutionContext context)
+        //{
+        //    Console.WriteLine(DateTime.Now.ToString("r"));
+        //}
+
+        Task IJob.Execute(IJobExecutionContext context)
+        {
+            return Task.Run(() => Console.WriteLine( $"Job2 {DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss fff")}"));
         }
     }
 }
