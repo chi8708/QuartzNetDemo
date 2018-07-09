@@ -30,11 +30,19 @@ namespace _01Basic
             //ISimpleTrigger trigger = (ISimpleTrigger)TriggerBuilder.Create().StartAt(startTime).EndAt(endTime).
             //    WithSimpleSchedule(x => x.WithIntervalInSeconds(3).WithRepeatCount(100)).Build();
 
-            //使用3：每分钟的第1，10，14,15秒执行一次。
-            //那么上面显然是不能满足的。这是我就把cron-like表达式引入进来，以实现各种时间纬度的调用
-            DateTimeOffset endTime = DateBuilder.NextGivenSecondDate(DateTime.Now.AddYears(2),3);
+            //使用3：每分钟的第1,10,14,25,35,50秒执行一次。
+            //那么上面显然是不能满足的。这是我就把cron-like（由7段构成：秒 分 时 日 月 星期 年（可选））表达式引入进来，以实现各种时间纬度的调用
+            //"-" ：表示范围  MON-WED表示星期一到星期三
+            // "," ：表示列举 MON, WEB表示星期一和星期三
+            //"*" ：表是“每”，每月，每天，每周，每年等
+            //"/" :表示增量：0 / 15（处于分钟段里面） 每15分钟，在0分以后开始，3 / 20 每20分钟，从3分钟以后开始
+            //"?" :只能出现在日，星期段里面，表示不指定具体的值
+            //"L" :只能出现在日，星期段里面，是Last的缩写，一个月的最后一天，一个星期的最后一天（星期六）
+            //"W" :表示工作日，距离给定值最近的工作日
+            //"#" :表示一个月的第几个星期几，例如："6#3"表示每个月的第三个星期五（1 = SUN...6 = FRI,7 = SAT）
+            DateTimeOffset endTime = DateBuilder.NextGivenSecondDate(DateTime.Now.AddYears(2), 3);
             ICronTrigger trigger = (ICronTrigger)TriggerBuilder.Create().StartAt(startTime).EndAt(endTime)
-                                        .WithCronSchedule("1,10,14,15 * * * * ? ")
+                                        .WithCronSchedule("1,10,14,25,35,50 * * * * ? ")
                                         .Build();
             //4.加入作业调度池中
             sched.ScheduleJob(job, trigger);
@@ -42,9 +50,9 @@ namespace _01Basic
             //加入第二个作业 1个job只能绑定在1个trigger
             IJobDetail job2 = JobBuilder.Create<JobDemo2>().Build();
             ISimpleTrigger trigger2 = (ISimpleTrigger)TriggerBuilder.Create().
-                WithSimpleSchedule(x => x.WithIntervalInSeconds(3).RepeatForever()).Build();
+                WithSimpleSchedule(x => x.WithIntervalInSeconds(3).WithRepeatCount(2)).Build();
             sched.ScheduleJob(job2, trigger2);
-         
+
             //5.开始运行
             sched.Start();
             ////挂起3分钟
@@ -57,6 +65,7 @@ namespace _01Basic
             sched.UnscheduleJob(trigger2.Key);//移除trigger2
 
             Console.ReadKey();
+            //参考https://www.cnblogs.com/jys509/p/4628926.html
 
         }
     }
@@ -74,7 +83,7 @@ namespace _01Basic
 
         Task IJob.Execute(IJobExecutionContext context)
         {
-           return Task.Run(()=>Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss fff")));
+            return Task.Run(() => Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss fff")));
         }
     }
 
@@ -92,7 +101,7 @@ namespace _01Basic
 
         Task IJob.Execute(IJobExecutionContext context)
         {
-            return Task.Run(() => Console.WriteLine( $"Job2 {DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss fff")}"));
+            return Task.Run(() => Console.WriteLine($"Job2 {DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss fff")}"));
         }
     }
 }
