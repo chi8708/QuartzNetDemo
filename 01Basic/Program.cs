@@ -14,6 +14,15 @@ namespace _01Basic
     {
         static void Main(string[] args)
         {
+            // Example1();
+            TriggerAndJobState.Run();
+            Console.ReadKey();
+            //参考https://www.cnblogs.com/jys509/p/4628926.html
+
+        }
+
+        private static void Example1()
+        {
             Console.WriteLine(DateTime.Now.ToString("r"));
             //1.首先创建一个作业调度池
             ISchedulerFactory schedf = new StdSchedulerFactory();
@@ -48,7 +57,7 @@ namespace _01Basic
             sched.ScheduleJob(job, trigger);
 
             //加入第二个作业 1个job只能绑定在1个trigger
-            IJobDetail job2 = JobBuilder.Create<JobDemo2>().Build();
+            IJobDetail job2 = JobBuilder.Create<JobDemo2>().WithIdentity("job2", "gorup2").Build();
             ISimpleTrigger trigger2 = (ISimpleTrigger)TriggerBuilder.Create().
                 WithSimpleSchedule(x => x.WithIntervalInSeconds(3).WithRepeatCount(2)).Build();
             sched.ScheduleJob(job2, trigger2);
@@ -63,10 +72,6 @@ namespace _01Basic
             //1分钟后移除trigger2
             Thread.Sleep(TimeSpan.FromMinutes(1));
             sched.UnscheduleJob(trigger2.Key);//移除trigger2
-
-            Console.ReadKey();
-            //参考https://www.cnblogs.com/jys509/p/4628926.html
-
         }
     }
 
@@ -83,7 +88,9 @@ namespace _01Basic
 
         Task IJob.Execute(IJobExecutionContext context)
         {
-            return Task.Run(() => Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss fff")));
+            Console.WriteLine(context.JobDetail.JobDataMap.Get("k1"));
+            return Task.Run(
+                () => Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss fff")));
         }
     }
 
