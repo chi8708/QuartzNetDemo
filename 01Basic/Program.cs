@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Quartz;
 using Quartz.Impl;
+using Quartz.Logging;
 
 namespace _01Basic
 {
@@ -14,6 +15,8 @@ namespace _01Basic
     {
         static void Main(string[] args)
         {
+            //控制台日志
+            LogProvider.SetCurrentLogProvider(new ConsoleLogProvider());
             // Example1();
             TriggerAndJobState.Run();
             Console.ReadKey();
@@ -77,14 +80,6 @@ namespace _01Basic
 
     public class JobDemo : IJob
     {
-        /// <summary>
-        /// 这里是作业调度每次定时执行方法
-        /// </summary>
-        /// <param name="context"></param>
-        //public void Execute(IJobExecutionContext context)
-        //{
-        //    Console.WriteLine(DateTime.Now.ToString("r"));
-        //}
 
         Task IJob.Execute(IJobExecutionContext context)
         {
@@ -97,15 +92,6 @@ namespace _01Basic
 
     public class JobDemo2 : IJob
     {
-        /// <summary>
-        /// 这里是作业调度每次定时执行方法
-        /// </summary>
-        /// <param name="context"></param>
-        //public void Execute(IJobExecutionContext context)
-        //{
-        //    Console.WriteLine(DateTime.Now.ToString("r"));
-        //}
-
         Task IJob.Execute(IJobExecutionContext context)
         {
             return Task.Run(() => Console.WriteLine($"Job2 {DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss fff")}"));

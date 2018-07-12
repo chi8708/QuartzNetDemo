@@ -64,6 +64,9 @@ namespace _01Basic
             {
                 if (r)
                 {
+                    // JobKey jobKey = context.JobDetail.Key;
+                    //context.Scheduler.PauseJob(jobKey);
+                    // context.Scheduler.PauseTrigger(context.Trigger.Key);
                     context.Scheduler.DeleteJobs(
                         new List<JobKey>() {
                         new JobKey("job2", "group"),
