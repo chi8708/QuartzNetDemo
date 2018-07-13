@@ -18,7 +18,8 @@ namespace _01Basic
             //控制台日志
             LogProvider.SetCurrentLogProvider(new ConsoleLogProvider());
             // Example1();
-            TriggerAndJobState.Run();
+            // TriggerAndJobState.Run();
+            AsyncTest.Excute();
             Console.ReadKey();
             //参考https://www.cnblogs.com/jys509/p/4628926.html
 
@@ -72,8 +73,13 @@ namespace _01Basic
             ////3分钟后关闭作业调度，将不在执行
             //sched.Shutdown();
 
+            //暂停所有
+            //sched.PauseAll();
             //1分钟后移除trigger2
             Thread.Sleep(TimeSpan.FromMinutes(1));
+            //重启
+            //sched.ResumeAll();
+
             sched.UnscheduleJob(trigger2.Key);//移除trigger2
         }
     }
@@ -87,6 +93,8 @@ namespace _01Basic
             return Task.Run(
                 () => Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss fff")));
         }
+
+      
     }
 
 

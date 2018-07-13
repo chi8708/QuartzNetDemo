@@ -32,7 +32,7 @@ namespace _01Basic
 
             //sched.ScheduleJob(job, trigger);
             //sched.ScheduleJob(job2, trigger2);
-         
+            sched.Start();
             IJobDetail job = JobBuilder.Create<JobDemo3>().WithIdentity("job1", "group").Build();
             ISimpleTrigger trigger = (ISimpleTrigger)TriggerBuilder.Create()
                 .WithSimpleSchedule(p => p.WithIntervalInSeconds(1).WithRepeatCount(3)).Build();
@@ -44,7 +44,7 @@ namespace _01Basic
                 .WithSimpleSchedule(p => p.WithIntervalInSeconds(1).WithRepeatCount(3)).Build();
             sched.ScheduleJob(job2, trigger2);
 
-            sched.Start();
+            
         }
 
 
@@ -62,6 +62,8 @@ namespace _01Basic
             static bool r = false;
             Task IJob.Execute(IJobExecutionContext context)
             {
+                
+                Console.Out.WriteLineAsync("Greetings from HelloJob!");
                 if (r)
                 {
                     // JobKey jobKey = context.JobDetail.Key;
