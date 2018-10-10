@@ -1,0 +1,7 @@
+F:\Study\DotNet\QuartzNetDemo\AsyncEx\bin\Debug\AsyncEx.exe.config
+F:\Study\DotNet\QuartzNetDemo\AsyncEx\bin\Debug\AsyncEx.exe
+F:\Study\DotNet\QuartzNetDemo\AsyncEx\bin\Debug\AsyncEx.pdb
+F:\Study\DotNet\QuartzNetDemo\AsyncEx\obj\Debug\AsyncEx.exe
+F:\Study\DotNet\QuartzNetDemo\AsyncEx\obj\Debug\AsyncEx.pdb
+F:\Study\DotNet\QuartzNetDemo\AsyncEx\obj\Debug\AsyncEx.csprojAssemblyReference.cache
+F:\Study\DotNet\QuartzNetDemo\AsyncEx\obj\Debug\AsyncEx.csproj.CoreCompileInputs.cache
